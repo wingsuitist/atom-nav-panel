@@ -133,7 +133,7 @@ class NavParser
       tooltip += argsMatch[1] if argsMatch
 
     item = {label: label, icon: icon, kind: kind, row: row
-      , tooltip: tooltip, indent: indent, parentIndent: parentIndent}
+      , tooltip: tooltip, indent: indent, parentIndent: parentIndent, match: match}
 
 
   # parseRule : to decipher rules in .nav-marker-rules file or within source

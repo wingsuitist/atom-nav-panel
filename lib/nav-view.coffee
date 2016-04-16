@@ -260,9 +260,6 @@ class NavView extends ResizableWidthView
       items = @arrangeItems(items, file)
       for item in items
         {id, elem} = @addPanelItem(item)
-        marker = editor.markBufferPosition([item.row, 0])
-        marker.zItemId = id
-        elem[0].markerId = marker.id
     # @view.children().hide()
     @setVisibility()
     @setPanelState(@filePanel, @state[file])
@@ -315,6 +312,7 @@ class NavView extends ResizableWidthView
       label = data.label
       # get count if available
       count = data.sisterItems.length
+      row = data.row
     else
       data ||= {}
 
@@ -327,14 +325,42 @@ class NavView extends ResizableWidthView
     tooltip = data.tooltip
     if !tooltip && label.length > 28
       tooltip = label.replace(/'/g, '&#39;')
-    html = """
-    <li id='zi-item-#{@nextId}' class='list-item' title='#{tooltip || ''}'>
-      <span #{labelClass}></span>
-      <span class='zi-marker-label'>#{label} (#{count})</span>
-    </li>
-    """
+
+    if count < 2
+        html = """
+        <li id='zi-item-#{@nextId}' class='list-item' title='#{tooltip || ''}'>
+          <span #{labelClass}></span>
+          <span class='zi-marker-label'>#{label} (#{count})</span>
+        </li>
+        """
+    else
+        sisterHtml = ''
+        for sisterItem in data.sisterItems
+            sisterHtml += """
+            <li id='zi-item-#{@nextId}' class='list-item'>
+              <span #{labelClass}></span>
+              <span class='zi-marker-label'>#{sisterItem.match}</span>
+            </li>
+            """
+        console.log(sisterHtml);
+        html = """
+        <li class='list-item' title='#{tooltip || ''}'>
+          <span #{labelClass}></span>
+          <span class='zi-marker-label'>#{label} (#{count})</span>
+          <ul class='list-tree'>
+            #{sisterHtml}
+          </ul>
+        </li>
+        """
+
     elem = $(html).appendTo(group)
     elem[0].origRow = data.row if data.row
+
+    editor = atom.workspace.getActiveTextEditor() unless editor
+    marker = editor.markBufferPosition([row, 0])
+    marker.zItemId = @nextId + 1
+    elem[0].markerId = marker.id
+
     return {id: @nextId++, elem: elem}
 
 
