@@ -314,6 +314,7 @@ class NavView extends ResizableWidthView
       count = data.sisterItems.length
       row = data.row
     else
+      count = 0
       data ||= {}
 
     group = @addGroup(groupLabel)
@@ -342,7 +343,6 @@ class NavView extends ResizableWidthView
               <span class='zi-marker-label'>#{sisterItem.match}</span>
             </li>
             """
-        console.log(sisterHtml);
         html = """
         <li class='list-item' title='#{tooltip || ''}'>
           <span #{labelClass}></span>
